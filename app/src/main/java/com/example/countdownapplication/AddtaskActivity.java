@@ -3,6 +3,7 @@ package com.example.countdownapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,7 +18,7 @@ import android.widget.Toast;
 import java.sql.Array;
 import java.util.ArrayList;
 
-public class AddtaskActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,
+public class AddtaskActivity extends AppCompatActivity implements
         View.OnClickListener {
 
     private Spinner monthSpinner, daySpinner, hourSpinner, minuteSpinner, secondSpinner;
@@ -51,7 +52,7 @@ public class AddtaskActivity extends AppCompatActivity implements AdapterView.On
         ArrayList<Integer> dayList = new ArrayList<>();
         ArrayList<Integer> hourList = new ArrayList<>();
         ArrayList<Integer> minuteList = new ArrayList<>();
-        ArrayList<Integer> secondList = new ArrayList<>();
+        final ArrayList<Integer> secondList = new ArrayList<>();
 
         for(int i = 1; i <= 60; i++){
             if(i <= 12){
@@ -70,27 +71,84 @@ public class AddtaskActivity extends AppCompatActivity implements AdapterView.On
         ArrayAdapter<Integer> monthListAdapter = new ArrayAdapter<>(this,
                 R.layout.support_simple_spinner_dropdown_item, monthList);
         monthSpinner.setAdapter(monthListAdapter);
-        monthSpinner.setOnItemSelectedListener(this);
+        monthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                int monthSelected = Integer.parseInt(parent.getItemAtPosition(position).toString());
+             //   String msg = monthSelected + " ";
+               // Toast.makeText(AddtaskActivity.this, msg, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                monthSelected = 1;
+            }
+        });
 
         ArrayAdapter<Integer> dayListAdapter = new ArrayAdapter<>(this,
                 R.layout.support_simple_spinner_dropdown_item, dayList);
         daySpinner.setAdapter(dayListAdapter);
-        daySpinner.setOnItemSelectedListener(this);
+        daySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                daySelected = Integer.parseInt(parent.getItemAtPosition(position).toString());
+               // Toast.makeText(AddtaskActivity.this, "Day " + daySelected, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                daySelected = 1;
+
+            }
+        });
 
         ArrayAdapter<Integer> hourListAdapter = new ArrayAdapter<>(this,
                 R.layout.support_simple_spinner_dropdown_item, hourList);
         hourSpinner.setAdapter(hourListAdapter);
-        hourSpinner.setOnItemSelectedListener(this);
+        hourSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                hourSelected = Integer.parseInt(parent.getItemAtPosition(position).toString());
+              //  Toast.makeText(AddtaskActivity.this, "hour "+ hourSelected, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                hourSelected = 24;
+            }
+        });
 
         ArrayAdapter<Integer> minuteListAdapter = new ArrayAdapter<>(this,
                 R.layout.support_simple_spinner_dropdown_item, minuteList);
         minuteSpinner.setAdapter(minuteListAdapter);
-        minuteSpinner.setOnItemSelectedListener(this);
+        minuteSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                minuteSelected = Integer.parseInt(parent.getItemAtPosition(position).toString());
+              //  Toast.makeText(AddtaskActivity.this, "min "+ minuteSelected, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                minuteSelected = 1;
+            }
+        });
 
         ArrayAdapter<Integer> secondListAdapter = new ArrayAdapter<>(this,
                 R.layout.support_simple_spinner_dropdown_item, secondList);
         secondSpinner.setAdapter(secondListAdapter);
-        secondSpinner.setOnItemSelectedListener(this);
+        secondSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                secondSelected = Integer.parseInt(parent.getItemAtPosition(position).toString());
+              //  Toast.makeText(AddtaskActivity.this, "sec "+secondSelected, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                secondSelected = 1;
+            }
+        });
 
 
 
@@ -112,35 +170,7 @@ public class AddtaskActivity extends AppCompatActivity implements AdapterView.On
         return mDb.insert(DatabaseHelper.TABLE_NAME, null, cv);
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        if(id == R.id.spinner_month){
-            monthSelected = (int)(monthSpinner.getItemAtPosition(position));
-            Toast.makeText(this, monthSelected, Toast.LENGTH_SHORT).show();
-        }
-        else if(id == R.id.spinner_day){
-            daySelected = (int)(daySpinner.getItemAtPosition(position));
-            Toast.makeText(this, daySelected, Toast.LENGTH_SHORT).show();
-        }
-        else if(id == R.id.spinner_hour){
-            hourSelected = (int)(hourSpinner.getItemAtPosition(position));
-            Toast.makeText(this, hourSelected, Toast.LENGTH_SHORT).show();
-        }
-        else if(id == R.id.spinner_minute){
-            minuteSelected = (int)(hourSpinner.getItemAtPosition(position));
-            Toast.makeText(this, minuteSelected, Toast.LENGTH_SHORT).show();
-        }
-        else if(id == R.id.spinner_second){
-            secondSelected = (int)(secondSpinner.getItemAtPosition(position));
-            Toast.makeText(this, secondSelected, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
 
     @Override
     public void onClick(View v) {

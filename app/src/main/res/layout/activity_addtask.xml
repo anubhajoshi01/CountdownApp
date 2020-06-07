@@ -144,7 +144,8 @@
         android:layout_below="@id/layout_timetv"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="60dp"
-        android:text="@string/addtask_btn_add"/>
+        android:text="@string/addtask_btn_add"
+        android:textColor="@color/colorPrimaryDark"/>
 
 
 
