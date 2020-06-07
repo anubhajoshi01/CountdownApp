@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer-array name="months"></integer-array>
+    <integer-array name="days"></integer-array>
+    <integer-array name="hours"></integer-array>
+    <integer-array name="minutes"></integer-array>
+    <integer-array name="seconds"></integer-array>
+
+</resources>
