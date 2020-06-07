@@ -117,18 +117,23 @@ public class AddtaskActivity extends AppCompatActivity implements AdapterView.On
 
         if(id == R.id.spinner_month){
             monthSelected = (int)(monthSpinner.getItemAtPosition(position));
+            Toast.makeText(this, monthSelected, Toast.LENGTH_SHORT).show();
         }
         else if(id == R.id.spinner_day){
             daySelected = (int)(daySpinner.getItemAtPosition(position));
+            Toast.makeText(this, daySelected, Toast.LENGTH_SHORT).show();
         }
         else if(id == R.id.spinner_hour){
             hourSelected = (int)(hourSpinner.getItemAtPosition(position));
+            Toast.makeText(this, hourSelected, Toast.LENGTH_SHORT).show();
         }
         else if(id == R.id.spinner_minute){
             minuteSelected = (int)(hourSpinner.getItemAtPosition(position));
+            Toast.makeText(this, minuteSelected, Toast.LENGTH_SHORT).show();
         }
         else if(id == R.id.spinner_second){
             secondSelected = (int)(secondSpinner.getItemAtPosition(position));
+            Toast.makeText(this, secondSelected, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -148,26 +153,30 @@ public class AddtaskActivity extends AppCompatActivity implements AdapterView.On
 
                 if(taskName.length() == 0 || taskName.isEmpty()){
                     String emptyMsg = "Please enter a task";
-                    Toast.makeText(AddtaskActivity.this, emptyMsg, Toast.LENGTH_SHORT);
+                    Toast.makeText(AddtaskActivity.this, emptyMsg, Toast.LENGTH_SHORT).show();
                 }
 
                 int year = Integer.parseInt(setYearEd.getText().toString());
 
                 if(addValuesToTable(taskName, year, monthSelected, daySelected, hourSelected,
                         minuteSelected, secondSelected) > -1){
-                    Toast.makeText(AddtaskActivity.this, "Made task", Toast.LENGTH_SHORT);
+                    Toast.makeText(AddtaskActivity.this, "Made task", Toast.LENGTH_SHORT)
+                    .show();
                     String logmsg = taskName + " " + year + " " + monthSelected + " " + daySelected +
                             " " + hourSelected + " " + minuteSelected + " " + secondSelected;
                     Log.d("Task Added", logmsg);
+                    mDb.close();
                 }
                 else{
-                    Toast.makeText(AddtaskActivity.this, "Failed", Toast.LENGTH_SHORT);
+                    Toast.makeText(AddtaskActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                 }
             }
             catch (NumberFormatException e){
                 String msg = "Please enter a valid year";
-                Toast.makeText(AddtaskActivity.this, msg, Toast.LENGTH_LONG);
+                Toast.makeText(AddtaskActivity.this, msg, Toast.LENGTH_LONG).show();
             }
+
+
         }
     }
 }
