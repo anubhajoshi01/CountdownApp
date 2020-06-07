@@ -17,4 +17,6 @@
     <string name="addtask_ed_setyear">Year</string>
 
     <string name="addtask_tv_prompttime">Enter the scheduled time</string>
+
+    <string name="addtask_btn_add"> Add </string>
 </resources>

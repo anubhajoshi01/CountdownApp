@@ -8,14 +8,14 @@ import androidx.annotation.Nullable;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String TABLE_NAME = "scheduled_events_table";
-    private static final String COL_1 = "Task";
-    private static final String COL_2 = "Year";
-    private static final String COL_3 = "Month";
-    private static final String COL_4 = "Day";
-    private static final String COL_5 = "Hour";
-    private static final String COL_6 = "Minute";
-    private static final String COL_7 = "Second";
+    public static final String TABLE_NAME = "scheduled_events_table";
+    public static final String COL_TASK = "Task";
+    public static final String COL_YEAR = "Year";
+    public static final String COL_MONTH = "Month";
+    public static final String COL_DAY = "Day";
+    public static final String COL_HOUR = "Hour";
+    public static final String COL_MIN = "Minute";
+    public static final String COL_SEC = "Second";
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, TABLE_NAME, null, 1);
@@ -24,14 +24,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createTable = "CREATE TABLE " + TABLE_NAME + "("
-                + COL_1 + " TEXT,"
-                + COL_2 + " INT,"
-                + COL_3 + " INT,"
-                + COL_3 + " INT,"
-                + COL_4 + " INT,"
-                + COL_5 + " INT,"
-                + COL_6 + " INT,"
-                + COL_7 + " INT "
+                + COL_TASK + " TEXT,"
+                + COL_YEAR + " INT,"
+                + COL_MONTH + " INT,"
+                + COL_DAY + " INT,"
+                + COL_HOUR + " INT,"
+                + COL_MIN + " INT,"
+                + COL_SEC + " INT"
                 + ");";
 
         db.execSQL(createTable);

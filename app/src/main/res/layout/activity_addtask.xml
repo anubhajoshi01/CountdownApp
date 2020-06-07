@@ -10,7 +10,7 @@
         android:id="@+id/tv_prompttask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginLeft="20dp"
         android:text="@string/addtask_tv_prompttask"
         android:textSize="20sp"
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/ed_entertask"
         android:text="@string/addtask_tv_promptdate"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="60dp"
         android:layout_centerHorizontal="true"
         android:textSize="20sp"
         />
@@ -44,7 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_promptdate"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="40dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:id="@+id/layout_date"
@@ -91,17 +91,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/layout_date"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:text="@string/addtask_tv_prompttime"
         android:layout_centerHorizontal="true"
         android:textSize="20sp"
         />
 
     <LinearLayout
+        android:id="@+id/layout_timetv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_prompttime"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="40dp"
         android:orientation="horizontal">
 
         <Spinner
@@ -135,6 +136,17 @@
 
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_timetv"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:text="@string/addtask_btn_add"/>
+
+
 
 </RelativeLayout>
 
