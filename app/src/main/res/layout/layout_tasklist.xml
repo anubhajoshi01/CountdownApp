@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tv_timeview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="24:00"
+        android:textSize="25sp"
+        android:textColor="#03058a"
+        />
+
+    <TextView
+        android:id="@+id/space"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_timeview"
+        android:text="   "/>
+
+    <TextView
+        android:id="@+id/tv_taskview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/space"
+        android:layout_marginRight="80sp"
+        android:text="This is a sample task"
+        android:layout_centerVertical="true"
+        android:textSize="20sp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_taskview"
+        android:layout_centerVertical="true"
+        android:text="2020/01/02"
+        android:textSize="10sp"
+        android:textColor="#000"
+        />
+
+
+
+</RelativeLayout>
