@@ -23,7 +23,11 @@ public class AddtaskActivity extends AppCompatActivity implements
 
     private Spinner monthSpinner, daySpinner, hourSpinner, minuteSpinner, secondSpinner;
     private Button addButton;
-    public SQLiteDatabase mDb;
+
+
+    DatabaseHelper mDbHelper;
+   public SQLiteDatabase mDb;
+
     private EditText setYearEd, enterTaskEd;
 
     private int monthSelected, daySelected, hourSelected, minuteSelected, secondSelected;
@@ -33,11 +37,12 @@ public class AddtaskActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addtask);
 
+        mDbHelper = new DatabaseHelper(AddtaskActivity.this);
+        //SQLiteDatabase mDb = new DatabaseHelper(AddtaskActivity.this);
+
         setYearEd = (EditText)findViewById(R.id.ed_setyear);
         enterTaskEd = (EditText)findViewById(R.id.ed_entertask);
 
-        DatabaseHelper mDbHelper = new DatabaseHelper(AddtaskActivity.this);
-        mDb = mDbHelper.getWritableDatabase();
 
         addButton = findViewById(R.id.btn_add);
         addButton.setOnClickListener(this);
@@ -64,8 +69,8 @@ public class AddtaskActivity extends AppCompatActivity implements
             if(i <= 31){
                 dayList.add(i);
             }
-            minuteList.add(i);
-            secondList.add(i);
+            minuteList.add(i-1);
+            secondList.add(i-1);
         }
 
         ArrayAdapter<Integer> monthListAdapter = new ArrayAdapter<>(this,
@@ -155,20 +160,7 @@ public class AddtaskActivity extends AppCompatActivity implements
        // ArrayAdapter<Integer> monthsAdapter = new ArrayAdapter<>(this, monthsList);
 
     }
-    private long addValuesToTable(String taskName, int year, int month, int day,
-                                  int hour, int minute, int second){
 
-        ContentValues cv = new ContentValues();
-
-        cv.put(DatabaseHelper.COL_TASK, taskName);
-        cv.put(DatabaseHelper.COL_YEAR, year);
-        cv.put(DatabaseHelper.COL_MONTH, month);
-        cv.put(DatabaseHelper.COL_HOUR, hour);
-        cv.put(DatabaseHelper.COL_MIN, minute);
-        cv.put(DatabaseHelper.COL_SEC, second);
-
-        return mDb.insert(DatabaseHelper.TABLE_NAME, null, cv);
-    }
 
 
 
@@ -188,14 +180,17 @@ public class AddtaskActivity extends AppCompatActivity implements
 
                 int year = Integer.parseInt(setYearEd.getText().toString());
 
-                if(addValuesToTable(taskName, year, monthSelected, daySelected, hourSelected,
-                        minuteSelected, secondSelected) > -1){
-                    Toast.makeText(AddtaskActivity.this, "Made task", Toast.LENGTH_SHORT)
-                    .show();
+                if(mDbHelper.insertData(taskName, year, monthSelected, daySelected, hourSelected,
+                        minuteSelected, secondSelected)){
                     String logmsg = taskName + " " + year + " " + monthSelected + " " + daySelected +
                             " " + hourSelected + " " + minuteSelected + " " + secondSelected;
                     Log.d("Task Added", logmsg);
-                    mDb.close();
+                    int count = DatabaseHelper.getEntryCount(mDb);
+                    Log.d("Entry count", count + " ");
+                    Toast.makeText(AddtaskActivity.this, "Made task", Toast.LENGTH_SHORT)
+                    .show();
+
+                   // mDb.close();
                 }
                 else{
                     Toast.makeText(AddtaskActivity.this, "Failed", Toast.LENGTH_SHORT).show();
@@ -205,6 +200,7 @@ public class AddtaskActivity extends AppCompatActivity implements
                 String msg = "Please enter a valid year";
                 Toast.makeText(AddtaskActivity.this, msg, Toast.LENGTH_LONG).show();
             }
+
 
 
         }

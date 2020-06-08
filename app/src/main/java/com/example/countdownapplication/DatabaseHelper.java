@@ -1,6 +1,8 @@
 package com.example.countdownapplication;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -16,9 +18,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_HOUR = "Hour";
     public static final String COL_MIN = "Minute";
     public static final String COL_SEC = "Second";
+    public static final String DATABASE_NAME = "Scheduled_task.db";
 
     public DatabaseHelper(@Nullable Context context) {
-        super(context, TABLE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, 1);
+    }
+
+    public static int getEntryCount(SQLiteDatabase db){
+        String getCount = "SELECT COUNT (" + COL_HOUR + ")" + " FROM " + TABLE_NAME;
+        Cursor cursor = db.rawQuery(getCount, null);
+        return cursor.getCount();
+    }
+
+    public boolean insertData(String task, int year, int month, int day, int hour, int minute,
+                              int second){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+
+        cv.put(DatabaseHelper.COL_TASK, task);
+        cv.put(DatabaseHelper.COL_YEAR, year);
+        cv.put(DatabaseHelper.COL_MONTH, month);
+        cv.put(DatabaseHelper.COL_HOUR, hour);
+        cv.put(DatabaseHelper.COL_MIN, minute);
+        cv.put(DatabaseHelper.COL_SEC, second);
+
+        return db.insert(DatabaseHelper.TABLE_NAME, null, cv) > -1;
     }
 
     @Override
@@ -41,4 +67,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
+
+
 }
