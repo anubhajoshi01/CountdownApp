@@ -197,6 +197,7 @@ public class AddtaskActivity extends AppCompatActivity implements
                     .show();
 
                    // mDb.close();
+                    //unclosed
                 }
                 else{
                     Toast.makeText(AddtaskActivity.this, "Failed", Toast.LENGTH_SHORT).show();
