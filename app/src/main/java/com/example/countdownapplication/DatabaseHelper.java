@@ -47,10 +47,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insert(DatabaseHelper.TABLE_NAME, null, cv) > -1;
     }
 
+    public Cursor getAllData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+        return cursor;
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createTable = "CREATE TABLE " + TABLE_NAME + "("
-                + COL_TASK + " TEXT,"
+                + COL_TASK + " TEXT UNIQUE,"
                 + COL_YEAR + " INT,"
                 + COL_MONTH + " INT,"
                 + COL_DAY + " INT,"

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -180,13 +181,18 @@ public class AddtaskActivity extends AppCompatActivity implements
 
                 int year = Integer.parseInt(setYearEd.getText().toString());
 
-                if(mDbHelper.insertData(taskName, year, monthSelected, daySelected, hourSelected,
+                if(taskExists(taskName)){
+                    String msg = "Task already scheduled";
+                    Toast.makeText(AddtaskActivity.this, msg, Toast.LENGTH_SHORT).show();
+                }
+
+                else if(mDbHelper.insertData(taskName, year, monthSelected, daySelected, hourSelected,
                         minuteSelected, secondSelected)){
                     String logmsg = taskName + " " + year + " " + monthSelected + " " + daySelected +
                             " " + hourSelected + " " + minuteSelected + " " + secondSelected;
                     Log.d("Task Added", logmsg);
-                    int count = DatabaseHelper.getEntryCount(mDb);
-                    Log.d("Entry count", count + " ");
+                  //  int count = DatabaseHelper.getEntryCount(mDb);
+                   // Log.d("Entry count", count + " ");
                     Toast.makeText(AddtaskActivity.this, "Made task", Toast.LENGTH_SHORT)
                     .show();
 
@@ -204,5 +210,22 @@ public class AddtaskActivity extends AppCompatActivity implements
 
 
         }
+    }
+
+    private boolean taskExists(String task){
+
+        Cursor cursor = mDbHelper.getAllData();
+
+        if(cursor.getCount() == 0){
+            return false;
+        }
+
+        while(cursor.moveToNext()){
+            String thistask = cursor.getString(0);
+            if(thistask.equals(task)){
+                return true;
+            }
+        }
+        return false;
     }
 }
