@@ -100,6 +100,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             RecyclerViewAdapter adapter = new RecyclerViewAdapter(timeList,taskList,dateList,MainActivity.this);
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+
         }
     }
 }

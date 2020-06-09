@@ -1,6 +1,7 @@
 package com.example.countdownapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
                 Toast.makeText(mContext, mTaskList.get(position), Toast.LENGTH_SHORT).show();
+                Intent viewTaskIntent = new Intent(mContext, ViewTaskActivity.class);
+                viewTaskIntent.putExtra("task", mTaskList.get(position));
+                mContext.startActivity(viewTaskIntent);
             }
         });
     }
