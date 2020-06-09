@@ -19,4 +19,6 @@
     <string name="addtask_tv_prompttime">Enter the scheduled time</string>
 
     <string name="addtask_btn_add"> Add </string>
+
+    <string name="main_tv_emptywarning">There are currently no tasks scheduled</string>
 </resources>
