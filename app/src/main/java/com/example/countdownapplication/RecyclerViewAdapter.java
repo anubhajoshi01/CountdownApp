@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private ArrayList<String> mTaskList = new ArrayList<>();
     private ArrayList<String> mDateList = new ArrayList<>();
     private Context mContext;
+    private RecyclerViewAdapter recyclerViewAdapter;
 
     public RecyclerViewAdapter(ArrayList<String> timeList, ArrayList<String> taskList,
                                ArrayList<String> dateList, Context context){
@@ -28,6 +30,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         mTimeList = timeList;
         mDateList = dateList;
         mContext = context;
+        recyclerViewAdapter = this;
     }
 
     @NonNull
@@ -54,6 +57,30 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 mContext.startActivity(viewTaskIntent);
             }
         });
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback =
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT |
+                                                                        ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                String taskRemoved = mTaskList.get((int)viewHolder.getAdapterPosition());
+                DatabaseHelper db = new DatabaseHelper(mContext);
+                db.deleteData(taskRemoved);
+
+                mTaskList.remove(viewHolder.getAdapterPosition());
+                mDateList.remove(viewHolder.getAdapterPosition());
+                mTimeList.remove(viewHolder.getAdapterPosition());
+
+                recyclerViewAdapter.notifyDataSetChanged();
+            }
+        };
     }
 
     @Override
