@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(this);
+
+        this.initRecyclerView();
     }
 
     @Override
@@ -95,7 +98,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             RecyclerView recyclerView = (RecyclerView)findViewById(R.id.rv_tasklist);
             RecyclerViewAdapter adapter = new RecyclerViewAdapter(timeList,taskList,dateList,MainActivity.this);
-            
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
         }
     }
 }
