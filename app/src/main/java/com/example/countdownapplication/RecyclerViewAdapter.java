@@ -2,6 +2,7 @@ package com.example.countdownapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private ArrayList<String> mTaskList = new ArrayList<>();
     private ArrayList<String> mDateList = new ArrayList<>();
     private Context mContext;
-    private RecyclerViewAdapter recyclerViewAdapter;
+  //  private RecyclerViewAdapter recyclerViewAdapter;
 
     public RecyclerViewAdapter(ArrayList<String> timeList, ArrayList<String> taskList,
                                ArrayList<String> dateList, Context context){
@@ -30,7 +31,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         mTimeList = timeList;
         mDateList = dateList;
         mContext = context;
-        recyclerViewAdapter = this;
+       // recyclerViewAdapter = this;
     }
 
     @NonNull
@@ -58,29 +59,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
         });
 
-        ItemTouchHelper.SimpleCallback itemTouchHelperCallback =
-                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT |
-                                                                        ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView,
-                                  @NonNull RecyclerView.ViewHolder viewHolder,
-                                  @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
 
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                String taskRemoved = mTaskList.get((int)viewHolder.getAdapterPosition());
-                DatabaseHelper db = new DatabaseHelper(mContext);
-                db.deleteData(taskRemoved);
-
-                mTaskList.remove(viewHolder.getAdapterPosition());
-                mDateList.remove(viewHolder.getAdapterPosition());
-                mTimeList.remove(viewHolder.getAdapterPosition());
-
-                recyclerViewAdapter.notifyDataSetChanged();
-            }
-        };
     }
 
     @Override
@@ -104,4 +83,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         }
     }
+
+    /*public class Viewholder extends RecyclerView.ViewHolder{
+
+
+        public Viewholder(@NonNull View itemView) {
+            super(itemView);
+        }
+
+        public interface onTaskClick(int position);
+    } */
 }

@@ -7,11 +7,14 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +25,13 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView emptyWarningTv;
+    private RecyclerView mRecyclerView;
+    private RecyclerViewAdapter mAdapter;
+
+    private ArrayList<String> mTaskList = new ArrayList<>();
+    private ArrayList<String> mTimeList = new ArrayList<>();
+    private ArrayList<String> mDateList = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +44,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab.setOnClickListener(this);
 
         this.initRecyclerView();
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT |
+                ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Log.d("Swiped", "on swiped");
+                String taskRemoved = mTaskList.get(viewHolder.getAdapterPosition());
+                Log.d("taskremoved", taskRemoved);
+                DatabaseHelper db = new DatabaseHelper(MainActivity.this);
+                db.deleteData(taskRemoved);
+
+                mTaskList.remove(viewHolder.getAdapterPosition());
+                mDateList.remove(viewHolder.getAdapterPosition());
+                mTimeList.remove(viewHolder.getAdapterPosition());
+                Log.d("Removing", "All removed");
+
+                mAdapter.notifyDataSetChanged();
+                Log.d("Notify", "Data set changed method ran");
+            }
+        }).attachToRecyclerView(mRecyclerView);
+
     }
 
     @Override
@@ -80,29 +118,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else{
 
-            ArrayList<String> taskList = new ArrayList<>();
-            ArrayList<String> timeList = new ArrayList<>();
-            ArrayList<String> dateList = new ArrayList<>();
 
             while(cursor.moveToNext()){
 
-                taskList.add(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL_TASK)));
-                timeList.add(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_HOUR))
+                mTaskList.add(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL_TASK)));
+                mTimeList.add(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_HOUR))
                     + ":" + cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_MIN)));
 
-                dateList.add(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_YEAR))
+                mDateList.add(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_YEAR))
                 + "/" + cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_MONTH))
                 + "/" + cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_DAY)));
 
             }
 
-            RecyclerView recyclerView = (RecyclerView)findViewById(R.id.rv_tasklist);
-            RecyclerViewAdapter adapter = new RecyclerViewAdapter(timeList,taskList,dateList,MainActivity.this);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+             mRecyclerView = (RecyclerView)findViewById(R.id.rv_tasklist);
+             mAdapter = new RecyclerViewAdapter(mTimeList,mTaskList,mDateList,MainActivity.this);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
         }
     }
+
+
 }

@@ -196,6 +196,8 @@ public class AddtaskActivity extends AppCompatActivity implements
                     Toast.makeText(AddtaskActivity.this, "Made task", Toast.LENGTH_SHORT)
                     .show();
 
+                    Intent mainIntent = new Intent(AddtaskActivity.this, MainActivity.class);
+                    startActivity(mainIntent);
                    // mDb.close();
                 }
                 else{
