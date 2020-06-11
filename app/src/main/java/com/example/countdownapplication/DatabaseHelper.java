@@ -40,6 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(DatabaseHelper.COL_TASK, task);
         cv.put(DatabaseHelper.COL_YEAR, year);
         cv.put(DatabaseHelper.COL_MONTH, month);
+        cv.put(DatabaseHelper.COL_DAY, day);
         cv.put(DatabaseHelper.COL_HOUR, hour);
         cv.put(DatabaseHelper.COL_MIN, minute);
         cv.put(DatabaseHelper.COL_SEC, second);

@@ -5,21 +5,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 public class ViewTaskActivity extends AppCompatActivity {
 
-    private TextView yourTaskTv, countdownTv;
+    private TextView yourTaskTv, countdownTv, showDateTv;
     private String task = "";
     private int[] data;
     private CountDownTimer countDownTimer;
     private long timeLeftInMs;
     private int secnow, minnow, hournow, daynow, monthnow, yearnow;
    public int dayleft, monthleft, yearleft;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +31,17 @@ public class ViewTaskActivity extends AppCompatActivity {
 
         yourTaskTv = (TextView)findViewById(R.id.tv_your_task);
         countdownTv = (TextView)findViewById(R.id.tv_countdown);
+        showDateTv = (TextView)findViewById(R.id.tv_show_date);
+
+
 
         if(getIntent().hasExtra("task")){
             task = getIntent().getStringExtra("task");
+            yourTaskTv.setText(task);
             data = getData(task);
         }
+
+        showDateTv.setText(data[0] + "/" + data[1] + "/" + data[2]);
 
         int second = data[5];
         int minute = data[4];
@@ -46,19 +55,16 @@ public class ViewTaskActivity extends AppCompatActivity {
 
 
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd");
-        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
 
-        String currentdate = dateFormat.format(calendar.getTime());
-        String currentTime = timeFormat.format(calendar.getTime());
+        yearnow = calendar.get(Calendar.YEAR);
+        monthnow = calendar.get(Calendar.MONTH);
+        daynow = calendar.get(Calendar.DAY_OF_MONTH);
 
-        yearnow = Integer.parseInt(currentdate.substring(0, 4));
-        monthnow = Integer.parseInt(currentdate.substring(5,7));
-        daynow = Integer.parseInt(currentdate.substring(8,10));
+        hournow = calendar.get(Calendar.HOUR);
+        minnow = calendar.get(Calendar.MINUTE);
+        secnow = calendar.get(Calendar.SECOND);
 
-        hournow = Integer.parseInt(currentTime.substring(0,2));
-        minnow = Integer.parseInt(currentTime.substring(3,5));
-        secnow = Integer.parseInt(currentTime.substring(6,8));
+        showDateTv.append(" " + yearnow + " "+ monthnow + " "+daynow);
 
         yearleft -= yearnow;
         if(monthleft-monthnow < 0){
@@ -76,6 +82,7 @@ public class ViewTaskActivity extends AppCompatActivity {
         else{
             dayleft -= daynow;
         }
+        Log.d("Date", yearleft + " "+ monthleft + " " + dayleft);
 
 
         timeLeftInMs = (secnow + minnow*60 + hournow*60*60);
@@ -126,12 +133,16 @@ public class ViewTaskActivity extends AppCompatActivity {
             @Override
             public void onTick(long millisUntilFinished) {
                 timeLeftInMs = millisUntilFinished;
-                long time = timeLeftInMs/1000;
+               /* long time = timeLeftInMs/1000;
                 long hourleft = time/3600;
                 long minleft = time - (hourleft*3600)/60;
-                long secleft = time - (minleft*60) - (hourleft*60);
+                long secleft = time - (minleft*60) - (hourleft*60);*/
+               // String timeleft =  timeFormat.format(timeLeftInMs/1000);
+                String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(timeLeftInMs),
+                        TimeUnit.MILLISECONDS.toMinutes(timeLeftInMs) % TimeUnit.HOURS.toMinutes(1),
+                        TimeUnit.MILLISECONDS.toSeconds(timeLeftInMs) % TimeUnit.MINUTES.toSeconds(1));
                 countdownTv.setText(yearleft + "/" + monthleft + "/" + dayleft + ";"
-                + hourleft + ":" + minleft + ":" + secleft);
+                + hms);
             }
 
             @Override

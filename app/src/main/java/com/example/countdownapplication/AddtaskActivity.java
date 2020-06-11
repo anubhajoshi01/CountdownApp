@@ -80,9 +80,9 @@ public class AddtaskActivity extends AppCompatActivity implements
         monthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int monthSelected = Integer.parseInt(parent.getItemAtPosition(position).toString());
-             //   String msg = monthSelected + " ";
-               // Toast.makeText(AddtaskActivity.this, msg, Toast.LENGTH_SHORT).show();
+                monthSelected = Integer.parseInt(parent.getItemAtPosition(position).toString());
+              String msg = monthSelected + " ";
+                Toast.makeText(AddtaskActivity.this, msg, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -98,7 +98,7 @@ public class AddtaskActivity extends AppCompatActivity implements
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 daySelected = Integer.parseInt(parent.getItemAtPosition(position).toString());
-               // Toast.makeText(AddtaskActivity.this, "Day " + daySelected, Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddtaskActivity.this, "Day " + daySelected, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -193,7 +193,8 @@ public class AddtaskActivity extends AppCompatActivity implements
                     Log.d("Task Added", logmsg);
                   //  int count = DatabaseHelper.getEntryCount(mDb);
                    // Log.d("Entry count", count + " ");
-                    Toast.makeText(AddtaskActivity.this, "Made task", Toast.LENGTH_SHORT)
+                    Toast.makeText(AddtaskActivity.this, logmsg
+                            , Toast.LENGTH_LONG)
                     .show();
 
                     Intent mainIntent = new Intent(AddtaskActivity.this, MainActivity.class);

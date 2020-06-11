@@ -24,4 +24,12 @@
         android:text="12:00:00"
         android:textSize="70sp"/>
 
+    <TextView
+        android:id="@+id/tv_show_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_countdown"
+        android:textSize="10sp"
+        android:layout_marginTop="10dp"/>
+
 </RelativeLayout>
