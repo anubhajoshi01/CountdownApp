@@ -1,5 +1,8 @@
 package com.example.countdownapplication;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -60,6 +63,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String taskRemoved = mTaskList.get(viewHolder.getAdapterPosition());
                 Log.d("taskremoved", taskRemoved);
                 DatabaseHelper db = new DatabaseHelper(MainActivity.this);
+
+                Cursor cursor = db.getAllData();
+                int taskID = 0;
+                while(cursor.moveToNext()){
+                    if(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL_TASK)
+                        ).equals(taskRemoved)){
+                        taskID = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_ID));
+                    }
+                }
+
+                cancelAlarm(taskID);
+
                 db.deleteData(taskRemoved);
 
                 mTaskList.remove(viewHolder.getAdapterPosition());
@@ -139,6 +154,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
+
+    private void cancelAlarm(int requestCode){
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(MainActivity.this, AlertReciever.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, requestCode, intent, 0);
+
+        alarmManager.cancel(pendingIntent);
+    }
+
 
 
 }

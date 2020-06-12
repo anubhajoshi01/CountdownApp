@@ -18,6 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_HOUR = "Hour";
     public static final String COL_MIN = "Minute";
     public static final String COL_SEC = "Second";
+    public static final String COL_ID = "Task_ID";
     public static final String DATABASE_NAME = "Scheduled_task.db";
 
     public DatabaseHelper(@Nullable Context context) {
@@ -45,6 +46,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(DatabaseHelper.COL_MIN, minute);
         cv.put(DatabaseHelper.COL_SEC, second);
 
+        Cursor cursor = getAllData();
+        cv.put(DatabaseHelper.COL_ID, cursor.getCount());
+
         return db.insert(DatabaseHelper.TABLE_NAME, null, cv) > -1;
     }
 
@@ -63,6 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String createTable = "CREATE TABLE " + TABLE_NAME + "("
                 + COL_TASK + " TEXT UNIQUE,"
+                + COL_ID + "INT,"
                 + COL_YEAR + " INT,"
                 + COL_MONTH + " INT,"
                 + COL_DAY + " INT,"

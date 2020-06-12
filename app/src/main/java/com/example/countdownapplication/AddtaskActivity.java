@@ -2,7 +2,10 @@ package com.example.countdownapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,6 +21,7 @@ import android.widget.Toast;
 
 import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class AddtaskActivity extends AppCompatActivity implements
         View.OnClickListener {
@@ -197,8 +201,35 @@ public class AddtaskActivity extends AppCompatActivity implements
                             , Toast.LENGTH_LONG)
                     .show();
 
-                    Intent mainIntent = new Intent(AddtaskActivity.this, MainActivity.class);
-                    startActivity(mainIntent);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.YEAR, year);
+                    calendar.set(Calendar.MONTH, monthSelected);
+                    calendar.set(Calendar.DAY_OF_MONTH, daySelected);
+                    calendar.set(Calendar.HOUR_OF_DAY, hourSelected);
+                    calendar.set(Calendar.MONTH, monthSelected);
+                    calendar.set(Calendar.SECOND, secondSelected);
+
+                    Cursor cursor = mDbHelper.getAllData();
+                    int id = 0;
+                    while(cursor.moveToNext()){
+                        if(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL_TASK))
+                            .equals(taskName)){
+                            id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_ID));
+                        }
+                    }
+
+                    if(calendar.before(Calendar.getInstance())){
+                        startAlarm(id, calendar, taskName);
+
+                        Intent mainIntent = new Intent(AddtaskActivity.this, MainActivity.class);
+                        startActivity(mainIntent);
+                    }
+                    else{
+                        Toast.makeText(AddtaskActivity.this, "Please enter a future date",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+
                    // mDb.close();
                 }
                 else{
@@ -230,5 +261,21 @@ public class AddtaskActivity extends AppCompatActivity implements
             }
         }
         return false;
+    }
+
+    public void startAlarm(int requestCode, Calendar calendar, String taskName){
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(AddtaskActivity.this, AlertReciever.class);
+        intent.putExtra("channelID", taskName);
+        intent.putExtra("taskName", taskName);
+        intent.putExtra("taskID", requestCode);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddtaskActivity.this,
+                requestCode, intent, 0);
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+
     }
 }
