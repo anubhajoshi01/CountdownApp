@@ -67,7 +67,8 @@ public class ViewTaskActivity extends AppCompatActivity {
         minnow = calendar.get(Calendar.MINUTE);
         secnow = calendar.get(Calendar.SECOND);
 
-        showDateTv.append(" " + yearnow + " "+ monthnow + " "+daynow);
+        showDateTv.append(" " + yearnow + " "+ monthnow + " "+daynow + "Time:" + hournow + ":" + minnow
+            + ":" + secnow);
 
         yearleft -= yearnow;
         if(monthleft-monthnow < 0){
@@ -141,9 +142,11 @@ public class ViewTaskActivity extends AppCompatActivity {
                 long minleft = time - (hourleft*3600)/60;
                 long secleft = time - (minleft*60) - (hourleft*60);*/
                // String timeleft =  timeFormat.format(timeLeftInMs/1000);
-                String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(timeLeftInMs),
+                int[] conversions = millisToTime(timeLeftInMs);
+                String hms = conversions[2] + ":" + conversions[1] + ":" + conversions[0];
+           /*     String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(timeLeftInMs),
                         TimeUnit.MILLISECONDS.toMinutes(timeLeftInMs) % TimeUnit.HOURS.toMinutes(1),
-                        TimeUnit.MILLISECONDS.toSeconds(timeLeftInMs) % TimeUnit.MINUTES.toSeconds(1));
+                        TimeUnit.MILLISECONDS.toSeconds(timeLeftInMs) % TimeUnit.MINUTES.toSeconds(1)); */
                 countdownTv.setText(yearleft + "/" + monthleft + "/" + dayleft + ";"
                 + hms);
             }
@@ -175,5 +178,13 @@ public class ViewTaskActivity extends AppCompatActivity {
                 }
             }
         }.start();
+    }
+
+    private static int[] millisToTime(long millis){
+        int seconds = (int) (millis / 1000) % 60;
+        int minutes = (int) ((millis / (1000*60)) % 60);
+        int hours   = (int) ((millis / (1000*60*60)) % 24);
+
+        return new int[]{hours, minutes, seconds};
     }
 }

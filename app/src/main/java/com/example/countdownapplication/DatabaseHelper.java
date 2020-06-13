@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static final String TABLE_NAME = "scheduled_events_table";
+    public static final String TABLE_NAME = "tasks_table";
     public static final String COL_TASK = "Task";
     public static final String COL_YEAR = "Year";
     public static final String COL_MONTH = "Month";
@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_MIN = "Minute";
     public static final String COL_SEC = "Second";
     public static final String COL_ID = "Task_ID";
-    public static final String DATABASE_NAME = "Scheduled_task.db";
+    public static final String DATABASE_NAME = "All_Scheduled_tasks.db";
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -47,7 +47,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(DatabaseHelper.COL_SEC, second);
 
         Cursor cursor = getAllData();
-        cv.put(DatabaseHelper.COL_ID, cursor.getCount());
+       //cv.put(DatabaseHelper.COL_ID, cursor.getCount());
 
         return db.insert(DatabaseHelper.TABLE_NAME, null, cv) > -1;
     }
@@ -66,8 +66,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createTable = "CREATE TABLE " + TABLE_NAME + "("
+                + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COL_TASK + " TEXT UNIQUE,"
-                + COL_ID + "INT,"
                 + COL_YEAR + " INT,"
                 + COL_MONTH + " INT,"
                 + COL_DAY + " INT,"

@@ -22,8 +22,10 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -64,26 +66,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("taskremoved", taskRemoved);
                 DatabaseHelper db = new DatabaseHelper(MainActivity.this);
 
-                Cursor cursor = db.getAllData();
+              /*  Cursor cursor = db.getAllData();
                 int taskID = 0;
                 while(cursor.moveToNext()){
                     if(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL_TASK)
                         ).equals(taskRemoved)){
                         taskID = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_ID));
                     }
+                }*/
+
+                int taskID = -1;
+                try {
+                    taskID = new AsyncTasks.CursorAsyncTask().execute(taskRemoved).get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
 
-                cancelAlarm(taskID);
+                if(taskID > -1) {
+                    cancelAlarm(taskID);
 
-                db.deleteData(taskRemoved);
+                    db.deleteData(taskRemoved);
 
-                mTaskList.remove(viewHolder.getAdapterPosition());
-                mDateList.remove(viewHolder.getAdapterPosition());
-                mTimeList.remove(viewHolder.getAdapterPosition());
-                Log.d("Removing", "All removed");
+                    mTaskList.remove(viewHolder.getAdapterPosition());
+                    mDateList.remove(viewHolder.getAdapterPosition());
+                    mTimeList.remove(viewHolder.getAdapterPosition());
+                    Log.d("Removing", "All removed");
 
-                mAdapter.notifyDataSetChanged();
-                Log.d("Notify", "Data set changed method ran");
+                    mAdapter.notifyDataSetChanged();
+                    Log.d("Notify", "Data set changed method ran");
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "Error removing task", Toast.LENGTH_SHORT).show();
+                }
             }
         }).attachToRecyclerView(mRecyclerView);
 

@@ -17,11 +17,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 public class AddtaskActivity extends AppCompatActivity implements
         View.OnClickListener {
@@ -34,6 +36,9 @@ public class AddtaskActivity extends AppCompatActivity implements
    public SQLiteDatabase mDb;
 
     private EditText setYearEd, enterTaskEd;
+    public Calendar calendar;
+
+    private TextView currentTimeTv;
 
     private int monthSelected, daySelected, hourSelected, minuteSelected, secondSelected;
 
@@ -48,6 +53,13 @@ public class AddtaskActivity extends AppCompatActivity implements
         setYearEd = (EditText)findViewById(R.id.ed_setyear);
         enterTaskEd = (EditText)findViewById(R.id.ed_entertask);
 
+        currentTimeTv = (TextView)findViewById(R.id.tv_current_time);
+
+        Calendar calendar = Calendar.getInstance();
+
+        currentTimeTv.setText(calendar.get(Calendar.YEAR) + " " + calendar.get(Calendar.MONTH) + " "
+            + calendar.get(Calendar.DAY_OF_MONTH) + " " + calendar.get(Calendar.HOUR_OF_DAY) + " "
+            + calendar.get(Calendar.MINUTE) + " " + calendar.get(Calendar.SECOND));
 
         addButton = findViewById(R.id.btn_add);
         addButton.setOnClickListener(this);
@@ -178,57 +190,77 @@ public class AddtaskActivity extends AppCompatActivity implements
             try{
                 String taskName = enterTaskEd.getText().toString();
 
+
+
                 if(taskName.length() == 0 || taskName.isEmpty()){
                     String emptyMsg = "Please enter a task";
                     Toast.makeText(AddtaskActivity.this, emptyMsg, Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
                 int year = Integer.parseInt(setYearEd.getText().toString());
+
+                calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthSelected);
+                calendar.set(Calendar.DAY_OF_MONTH, daySelected);
+                calendar.set(Calendar.HOUR_OF_DAY, hourSelected);
+                calendar.set(Calendar.MONTH, monthSelected);
+                calendar.set(Calendar.SECOND, secondSelected);
+
+                AsyncTasks.InsertionAsyncTask insertionAsyncTask = new AsyncTasks.InsertionAsyncTask();
 
                 if(taskExists(taskName)){
                     String msg = "Task already scheduled";
                     Toast.makeText(AddtaskActivity.this, msg, Toast.LENGTH_SHORT).show();
                 }
 
-                else if(mDbHelper.insertData(taskName, year, monthSelected, daySelected, hourSelected,
-                        minuteSelected, secondSelected)){
+                else if(calendar.before(Calendar.getInstance())){
+
+
+                    Toast.makeText(AddtaskActivity.this, "Please enter a future time",
+                            Toast.LENGTH_SHORT).show();
+
+                }
+
+                else if(insertionAsyncTask.execute(taskName, String.valueOf(year), String.valueOf(monthSelected),
+                                String.valueOf(daySelected), String.valueOf(hourSelected),
+                                String.valueOf(minuteSelected), String.valueOf(secondSelected)).get()){
                     String logmsg = taskName + " " + year + " " + monthSelected + " " + daySelected +
                             " " + hourSelected + " " + minuteSelected + " " + secondSelected;
                     Log.d("Task Added", logmsg);
                   //  int count = DatabaseHelper.getEntryCount(mDb);
                    // Log.d("Entry count", count + " ");
+                    Log.d("Inserted","Inserted task");
                     Toast.makeText(AddtaskActivity.this, logmsg
                             , Toast.LENGTH_LONG)
                     .show();
 
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(Calendar.YEAR, year);
-                    calendar.set(Calendar.MONTH, monthSelected);
-                    calendar.set(Calendar.DAY_OF_MONTH, daySelected);
-                    calendar.set(Calendar.HOUR_OF_DAY, hourSelected);
-                    calendar.set(Calendar.MONTH, monthSelected);
-                    calendar.set(Calendar.SECOND, secondSelected);
 
-                    Cursor cursor = mDbHelper.getAllData();
+
+
+
+                  /*  Cursor cursor = mDbHelper.getAllData();
                     int id = 0;
                     while(cursor.moveToNext()){
                         if(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL_TASK))
                             .equals(taskName)){
                             id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_ID));
                         }
-                    }
+                    }*/
+                    AsyncTasks.CursorAsyncTask cursorAsyncTask = new AsyncTasks.CursorAsyncTask();
 
-                    if(calendar.before(Calendar.getInstance())){
+                    int id = cursorAsyncTask.execute(taskName).get();
+
+                    if(id > -1) {
                         startAlarm(id, calendar, taskName);
-
-                        Intent mainIntent = new Intent(AddtaskActivity.this, MainActivity.class);
-                        startActivity(mainIntent);
-                    }
-                    else{
-                        Toast.makeText(AddtaskActivity.this, "Please enter a future date",
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "set alarm", Toast.LENGTH_SHORT);
+                    }else {
+                        Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
                     }
 
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
 
                    // mDb.close();
                 }
@@ -239,8 +271,11 @@ public class AddtaskActivity extends AppCompatActivity implements
             catch (NumberFormatException e){
                 String msg = "Please enter a valid year";
                 Toast.makeText(AddtaskActivity.this, msg, Toast.LENGTH_LONG).show();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
-
 
 
         }

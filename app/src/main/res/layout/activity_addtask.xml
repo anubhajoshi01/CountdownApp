@@ -147,6 +147,13 @@
         android:text="@string/addtask_btn_add"
         android:textColor="@color/colorPrimaryDark"/>
 
+    <TextView
+        android:id="@+id/tv_current_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_add"
+        android:textSize="10sp"/>
+
 
 
 </RelativeLayout>
