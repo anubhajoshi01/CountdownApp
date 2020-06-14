@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 int taskID = -1;
                 try {
-                    taskID = new AsyncTasks.CursorAsyncTask().execute(taskRemoved).get();
+                    taskID = new AsyncTasks.CursorAsyncTask(MainActivity.this).execute(taskRemoved).get();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -153,12 +153,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             while(cursor.moveToNext()){
 
                 mTaskList.add(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL_TASK)));
-                mTimeList.add(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_HOUR))
-                    + ":" + cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_MIN)));
+                mTimeList.add(format(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_HOUR)))
+                    + ":" + format(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_MIN))));
 
                 mDateList.add(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_YEAR))
-                + "/" + cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_MONTH))
-                + "/" + cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_DAY)));
+                + "/" + format(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_MONTH)))
+                + "/" + format(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_DAY))));
 
             }
 
@@ -178,6 +178,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, requestCode, intent, 0);
 
         alarmManager.cancel(pendingIntent);
+    }
+
+    private static String format(int i){
+        if(i < 10){
+            return "0"+i;
+        }
+        return String.valueOf(i);
     }
 
 

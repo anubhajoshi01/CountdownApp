@@ -45,9 +45,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        holder.dateviewTv.setText(mDateList.get(position));
-        holder.taskviewTv.setText(mTaskList.get(position));
-        holder.timeviewTv.setText(mTimeList.get(position));
+        holder.dateviewTv.setText(format(mDateList.get(position)));
+        holder.taskviewTv.setText(format(mTaskList.get(position)));
+        holder.timeviewTv.setText(format(mTimeList.get(position)));
 
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,4 +93,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         public interface onTaskClick(int position);
     } */
+
+    private static String format(String i){
+        if(i.length() == 3){
+            return "0"+i;
+        }
+        return i;
+    }
 }

@@ -76,6 +76,8 @@ public class AddtaskActivity extends AppCompatActivity implements
         ArrayList<Integer> minuteList = new ArrayList<>();
         final ArrayList<Integer> secondList = new ArrayList<>();
 
+        // fills the arraylists for the spinners
+
         for(int i = 1; i <= 60; i++){
             if(i <= 12){
                 monthList.add(i);
@@ -97,8 +99,8 @@ public class AddtaskActivity extends AppCompatActivity implements
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 monthSelected = Integer.parseInt(parent.getItemAtPosition(position).toString());
-              String msg = monthSelected + " ";
-                Toast.makeText(AddtaskActivity.this, msg, Toast.LENGTH_SHORT).show();
+              //String msg = monthSelected + " ";
+              //  Toast.makeText(AddtaskActivity.this, msg, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -114,7 +116,7 @@ public class AddtaskActivity extends AppCompatActivity implements
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 daySelected = Integer.parseInt(parent.getItemAtPosition(position).toString());
-                Toast.makeText(AddtaskActivity.this, "Day " + daySelected, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(AddtaskActivity.this, "Day " + daySelected, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -200,6 +202,8 @@ public class AddtaskActivity extends AppCompatActivity implements
 
                 int year = Integer.parseInt(setYearEd.getText().toString());
 
+                //sets date and time entered in Calender object
+
                 calendar = Calendar.getInstance();
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, monthSelected);
@@ -208,13 +212,16 @@ public class AddtaskActivity extends AppCompatActivity implements
                 calendar.set(Calendar.MONTH, monthSelected);
                 calendar.set(Calendar.SECOND, secondSelected);
 
-                AsyncTasks.InsertionAsyncTask insertionAsyncTask = new AsyncTasks.InsertionAsyncTask();
-
+                AsyncTasks.InsertionAsyncTask insertionAsyncTask = new AsyncTasks.InsertionAsyncTask(
+                        AddtaskActivity.this
+                );
+                //if task already exists in database
                 if(taskExists(taskName)){
                     String msg = "Task already scheduled";
                     Toast.makeText(AddtaskActivity.this, msg, Toast.LENGTH_SHORT).show();
                 }
 
+                //If the date/time entered is not in the future
                 else if(calendar.before(Calendar.getInstance())){
 
 
@@ -222,7 +229,7 @@ public class AddtaskActivity extends AppCompatActivity implements
                             Toast.LENGTH_SHORT).show();
 
                 }
-
+                //Runs async task to insert values into database
                 else if(insertionAsyncTask.execute(taskName, String.valueOf(year), String.valueOf(monthSelected),
                                 String.valueOf(daySelected), String.valueOf(hourSelected),
                                 String.valueOf(minuteSelected), String.valueOf(secondSelected)).get()){
@@ -248,10 +255,12 @@ public class AddtaskActivity extends AppCompatActivity implements
                             id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_ID));
                         }
                     }*/
-                    AsyncTasks.CursorAsyncTask cursorAsyncTask = new AsyncTasks.CursorAsyncTask();
+                    AsyncTasks.CursorAsyncTask cursorAsyncTask = new AsyncTasks.CursorAsyncTask(
+                            AddtaskActivity.this
+                    );
 
                     int id = cursorAsyncTask.execute(taskName).get();
-
+                    //sets alarm notification for task
                     if(id > -1) {
                         startAlarm(id, calendar, taskName);
                         Toast.makeText(this, "set alarm", Toast.LENGTH_SHORT);

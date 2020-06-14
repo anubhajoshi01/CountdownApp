@@ -1,5 +1,6 @@
 package com.example.countdownapplication;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 
@@ -7,14 +8,17 @@ public class AsyncTasks {
 
     public static class InsertionAsyncTask extends AsyncTask<String, Void, Boolean> {
 
-        public InsertionAsyncTask(){
+        Context context;
+
+        public InsertionAsyncTask(Context context){
             super();
+            this.context = context;
         }
 
         @Override
         protected Boolean doInBackground(String... strings) {
             if(strings.length == 7){
-                DatabaseHelper db = new DatabaseHelper(null);
+                DatabaseHelper db = new DatabaseHelper(context);
                 return db.insertData(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[2]),
                         Integer.parseInt(strings[3]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]),
                         Integer.parseInt(strings[6]));
@@ -32,14 +36,17 @@ public class AsyncTasks {
 
     public static class CursorAsyncTask extends AsyncTask<String, Void, Integer>{
 
-        public CursorAsyncTask(){
+        Context context;
+
+        public CursorAsyncTask(Context context){
             super();
+            this.context = context;
         }
 
         @Override
         protected Integer doInBackground(String... strings) {
             String task = strings[0];
-            DatabaseHelper db = new DatabaseHelper(null);
+            DatabaseHelper db = new DatabaseHelper(context);
             Cursor cursor = db.getAllData();
 
             while(cursor.moveToNext()){

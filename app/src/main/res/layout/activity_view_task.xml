@@ -17,18 +17,27 @@
         />
 
     <TextView
-        android:id="@+id/tv_countdown"
+        android:id="@+id/tv_countdown_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="12:00:00"
+        tools:text="12/01/01"
+        android:textSize="70sp"/>
+
+    <TextView
+        android:id="@+id/tv_countdown_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_countdown_date"
+        android:layout_centerHorizontal="true"
+        tools:text="1:0:0"
         android:textSize="70sp"/>
 
     <TextView
         android:id="@+id/tv_show_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_countdown"
+        android:layout_below="@id/tv_countdown_time"
         android:textSize="10sp"
         android:layout_marginTop="10dp"/>
 

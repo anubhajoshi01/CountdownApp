@@ -8,14 +8,13 @@ import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import org.w3c.dom.Text;
+
 import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 
 public class ViewTaskActivity extends AppCompatActivity {
 
-    private TextView yourTaskTv, countdownTv, showDateTv;
+    private TextView yourTaskTv, countdownTv, showDateTv, countdownTimeTv;
     private String task = "";
     private int[] data;
     private CountDownTimer countDownTimer;
@@ -30,8 +29,9 @@ public class ViewTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_task);
 
         yourTaskTv = (TextView)findViewById(R.id.tv_your_task);
-        countdownTv = (TextView)findViewById(R.id.tv_countdown);
+        countdownTv = (TextView)findViewById(R.id.tv_countdown_date);
         showDateTv = (TextView)findViewById(R.id.tv_show_date);
+        countdownTimeTv = (TextView)findViewById(R.id.tv_countdown_time);
 
 
 
@@ -147,8 +147,8 @@ public class ViewTaskActivity extends AppCompatActivity {
            /*     String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(timeLeftInMs),
                         TimeUnit.MILLISECONDS.toMinutes(timeLeftInMs) % TimeUnit.HOURS.toMinutes(1),
                         TimeUnit.MILLISECONDS.toSeconds(timeLeftInMs) % TimeUnit.MINUTES.toSeconds(1)); */
-                countdownTv.setText(yearleft + "/" + monthleft + "/" + dayleft + ";"
-                + hms);
+                countdownTv.setText(yearleft + "/" + monthleft + "/" + dayleft + ";");
+                countdownTimeTv.setText(hms);
             }
 
             @Override
