@@ -1,14 +1,12 @@
 package com.example.countdownapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Calendar;
 
@@ -19,8 +17,9 @@ public class ViewTaskActivity extends AppCompatActivity {
     private int[] data;
     private CountDownTimer countDownTimer;
     private long timeLeftInMs;
-    private int secnow, minnow, hournow, daynow, monthnow, yearnow;
-   public int dayleft, monthleft, yearleft;
+   // private int secnow, minnow, hournow, daynow, monthnow, yearnow;
+   //public int dayleft, monthleft, yearleft;
+    Calendar calendar = Calendar.getInstance();
 
 
     @Override
@@ -43,12 +42,14 @@ public class ViewTaskActivity extends AppCompatActivity {
 
         showDateTv.setText(data[0] + "/" + data[1] + "/" + data[2]);
 
-        int second = data[5];
-        int minute = data[4];
-        int hour = data[3];
-        dayleft = data[2];
-        monthleft = data[1];
-        yearleft = data[0];
+
+        Calendar dateDue = Calendar.getInstance();
+        dateDue.set(Calendar.SECOND, data[5]);
+        dateDue.set(Calendar.MINUTE, data[4]);
+        dateDue.set(Calendar.HOUR_OF_DAY, data[3]);
+        dateDue.set(Calendar.DAY_OF_MONTH, data[2]);
+        dateDue.set(Calendar.MONTH, data[1]);
+        dateDue.set(Calendar.YEAR, data[0]);
 
 
 
@@ -57,13 +58,17 @@ public class ViewTaskActivity extends AppCompatActivity {
       //          getDaysInMonth(month, year)*24*60*60 + year;
 
 
-        Calendar calendar = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
 
+        calendar.setTimeInMillis(dateDue.getTimeInMillis() - now.getTimeInMillis());
+        showDateTv.setText(String.valueOf(dateDue.getTimeInMillis()) +" "+ String.valueOf(now.getTimeInMillis())
+            + " " + String.valueOf(dateDue.getTimeInMillis() - now.getTimeInMillis()));
+        /*
         yearnow = calendar.get(Calendar.YEAR);
         monthnow = calendar.get(Calendar.MONTH);
         daynow = calendar.get(Calendar.DAY_OF_MONTH);
 
-        hournow = calendar.get(Calendar.HOUR);
+        hournow = calendar.get(Calendar.HOUR_OF_DAY);
         minnow = calendar.get(Calendar.MINUTE);
         secnow = calendar.get(Calendar.SECOND);
 
@@ -88,8 +93,8 @@ public class ViewTaskActivity extends AppCompatActivity {
         }
         Log.d("Date", yearleft + " "+ monthleft + " " + dayleft);
 
-
-        timeLeftInMs = (secnow + minnow*60 + hournow*60*60);
+        */
+        timeLeftInMs = calendar.getTimeInMillis();
         startNewTimer(timeLeftInMs);
 
 
@@ -113,7 +118,7 @@ public class ViewTaskActivity extends AppCompatActivity {
         return new int[] {0};
     }
 
-    private int getDaysInMonth(int month, int year){
+    public static int getDaysInMonth(int month, int year){
         switch (month){
             case 1: return 31;
             case 2: return (year%4==0) ? 29 : 28;
@@ -137,54 +142,38 @@ public class ViewTaskActivity extends AppCompatActivity {
             @Override
             public void onTick(long millisUntilFinished) {
                 timeLeftInMs = millisUntilFinished;
+                calendar.setTimeInMillis(timeLeftInMs);
                /* long time = timeLeftInMs/1000;
                 long hourleft = time/3600;
                 long minleft = time - (hourleft*3600)/60;
                 long secleft = time - (minleft*60) - (hourleft*60);*/
                // String timeleft =  timeFormat.format(timeLeftInMs/1000);
-                int[] conversions = millisToTime(timeLeftInMs);
-                String hms = conversions[2] + ":" + conversions[1] + ":" + conversions[0];
+               // int[] conversions = millisToTime(timeLeftInMs);
+                String hms = calendar.get(Calendar.HOUR_OF_DAY)+":"+calendar.get(Calendar.MINUTE)+":"+calendar.get(Calendar.SECOND);
            /*     String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(timeLeftInMs),
                         TimeUnit.MILLISECONDS.toMinutes(timeLeftInMs) % TimeUnit.HOURS.toMinutes(1),
                         TimeUnit.MILLISECONDS.toSeconds(timeLeftInMs) % TimeUnit.MINUTES.toSeconds(1)); */
-                countdownTv.setText(yearleft + "/" + monthleft + "/" + dayleft + ";");
+                countdownTv.setText(calendar.get(Calendar.YEAR)+ "/" + calendar.get(Calendar.MONTH) + "/"
+                        + calendar.get(Calendar.DAY_OF_MONTH) + ";");
                 countdownTimeTv.setText(hms);
             }
 
             @Override
             public void onFinish() {
-                dayleft -= 1;
-                if (dayleft == 0) {
-                    dayleft = getDaysInMonth(monthleft, data[0]-yearleft);
-                    monthleft -= 1;
-                    if(monthleft == 0){
-                        if(yearleft == 0){
-                            startNewTimer((24-data[3]*60*60) + (60-data[4]*60) + 60-data[5]);
-                        }
-                        else {
-                            yearleft-=1;
-                            monthleft = 11;
-                            dayleft = getDaysInMonth(monthleft, data[0] - yearleft);
-                            startNewTimer(86400);
-                        }
 
-                    }
-                    else{
-                        startNewTimer(86400);
-                    }
-                }
-                else {
-                    startNewTimer(86400);
-                }
+                Intent intent = new Intent(ViewTaskActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         }.start();
     }
 
-    private static int[] millisToTime(long millis){
+
+
+    /*private static int[] millisToTime(long millis){
         int seconds = (int) (millis / 1000) % 60;
         int minutes = (int) ((millis / (1000*60)) % 60);
         int hours   = (int) ((millis / (1000*60*60)) % 24);
 
         return new int[]{hours, minutes, seconds};
-    }
+    } */
 }

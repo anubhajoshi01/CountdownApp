@@ -6,23 +6,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.TextView;
-import android.widget.Toast;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -33,14 +32,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mAdapter;
 
+    private static Context mContext;
+    private MessageDelayer.DelayerCallback mMessageDelayer;
+
     private ArrayList<String> mTaskList = new ArrayList<>();
     private ArrayList<String> mTimeList = new ArrayList<>();
     private ArrayList<String> mDateList = new ArrayList<>();
 
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -77,14 +84,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 int taskID = -1;
                 try {
+                    EspressoIdlingResource.increment();
                     taskID = new AsyncTasks.CursorAsyncTask(MainActivity.this).execute(taskRemoved).get();
+                    EspressoIdlingResource.decrement();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-                if(taskID > -1) {
+                if (taskID > -1) {
                     cancelAlarm(taskID);
 
                     db.deleteData(taskRemoved);
@@ -96,8 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     mAdapter.notifyDataSetChanged();
                     Log.d("Notify", "Data set changed method ran");
-                }
-                else{
+                } else {
                     Toast.makeText(MainActivity.this, "Error removing task", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -131,39 +139,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         int thisid = v.getId();
 
-        if(thisid == R.id.fab){
+        if (thisid == R.id.fab) {
             Intent addtaskActivityIntent = new Intent(MainActivity.this, AddtaskActivity.class);
             startActivity(addtaskActivityIntent);
         }
     }
 
-    private void initRecyclerView(){
+    private void initRecyclerView() {
 
-        emptyWarningTv = (TextView)findViewById(R.id.tv_emptywarning);
+        emptyWarningTv = (TextView) findViewById(R.id.tv_emptywarning);
 
         DatabaseHelper db = new DatabaseHelper(MainActivity.this);
         Cursor cursor = db.getAllData();
 
-        if(cursor.getCount() == 0){
+        if (cursor.getCount() == 0) {
             emptyWarningTv.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
 
 
-            while(cursor.moveToNext()){
+            while (cursor.moveToNext()) {
 
                 mTaskList.add(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL_TASK)));
                 mTimeList.add(format(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_HOUR)))
-                    + ":" + format(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_MIN))));
+                        + ":" + format(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_MIN))));
 
                 mDateList.add(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_YEAR))
-                + "/" + format(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_MONTH)))
-                + "/" + format(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_DAY))));
+                        + "/" + format(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_MONTH)))
+                        + "/" + format(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_DAY))));
 
             }
 
-             mRecyclerView = (RecyclerView)findViewById(R.id.rv_tasklist);
-             mAdapter = new RecyclerViewAdapter(mTimeList,mTaskList,mDateList,MainActivity.this);
+            mRecyclerView = (RecyclerView) findViewById(R.id.rv_tasklist);
+            mAdapter = new RecyclerViewAdapter(mTimeList, mTaskList, mDateList, MainActivity.this);
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -171,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void cancelAlarm(int requestCode){
+    private void cancelAlarm(int requestCode) {
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(MainActivity.this, AlertReciever.class);
@@ -180,13 +187,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         alarmManager.cancel(pendingIntent);
     }
 
-    private static String format(int i){
-        if(i < 10){
-            return "0"+i;
+    private static String format(int i) {
+        if (i < 10) {
+            return "0" + i;
         }
         return String.valueOf(i);
     }
 
-
+    public static Context getContext(){
+        return mContext;
+    }
 
 }

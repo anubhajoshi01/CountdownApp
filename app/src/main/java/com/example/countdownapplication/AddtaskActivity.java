@@ -1,10 +1,7 @@
 package com.example.countdownapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -20,13 +17,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.sql.Array;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 public class AddtaskActivity extends AppCompatActivity implements
-        View.OnClickListener {
+        View.OnClickListener{
 
     private Spinner monthSpinner, daySpinner, hourSpinner, minuteSpinner, secondSpinner;
     private Button addButton;
@@ -105,7 +103,7 @@ public class AddtaskActivity extends AppCompatActivity implements
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                monthSelected = 1;
+                monthSelected = 0;
             }
         });
 
@@ -206,7 +204,7 @@ public class AddtaskActivity extends AppCompatActivity implements
 
                 calendar = Calendar.getInstance();
                 calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, monthSelected);
+                calendar.set(Calendar.MONTH, monthSelected-1);
                 calendar.set(Calendar.DAY_OF_MONTH, daySelected);
                 calendar.set(Calendar.HOUR_OF_DAY, hourSelected);
                 calendar.set(Calendar.MONTH, monthSelected);
@@ -228,20 +226,25 @@ public class AddtaskActivity extends AppCompatActivity implements
                     Toast.makeText(AddtaskActivity.this, "Please enter a future time",
                             Toast.LENGTH_SHORT).show();
 
+                    Log.d(">>>>>>>Calendar", calendar.getTimeZone() + " "+ Calendar.getInstance().getTimeZone());
+
                 }
                 //Runs async task to insert values into database
-                else if(insertionAsyncTask.execute(taskName, String.valueOf(year), String.valueOf(monthSelected),
-                                String.valueOf(daySelected), String.valueOf(hourSelected),
-                                String.valueOf(minuteSelected), String.valueOf(secondSelected)).get()){
-                    String logmsg = taskName + " " + year + " " + monthSelected + " " + daySelected +
-                            " " + hourSelected + " " + minuteSelected + " " + secondSelected;
-                    Log.d("Task Added", logmsg);
-                  //  int count = DatabaseHelper.getEntryCount(mDb);
-                   // Log.d("Entry count", count + " ");
-                    Log.d("Inserted","Inserted task");
-                    Toast.makeText(AddtaskActivity.this, logmsg
-                            , Toast.LENGTH_LONG)
-                    .show();
+
+                else{ EspressoIdlingResource.increment();
+                    if(insertionAsyncTask.execute(taskName, String.valueOf(year), String.valueOf(monthSelected),
+                            String.valueOf(daySelected), String.valueOf(hourSelected),
+                            String.valueOf(minuteSelected), String.valueOf(secondSelected)).get()){
+                        EspressoIdlingResource.decrement();
+                        String logmsg = taskName + " " + year + " " + monthSelected + " " + daySelected +
+                                " " + hourSelected + " " + minuteSelected + " " + secondSelected;
+                        Log.d("Task Added", logmsg);
+                        //  int count = DatabaseHelper.getEntryCount(mDb);
+                        // Log.d("Entry count", count + " ");
+                        Log.d("Inserted","Inserted task");
+                        Toast.makeText(AddtaskActivity.this, logmsg
+                                , Toast.LENGTH_LONG)
+                                .show();
 
 
 
@@ -255,26 +258,28 @@ public class AddtaskActivity extends AppCompatActivity implements
                             id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_ID));
                         }
                     }*/
-                    AsyncTasks.CursorAsyncTask cursorAsyncTask = new AsyncTasks.CursorAsyncTask(
-                            AddtaskActivity.this
-                    );
+                        AsyncTasks.CursorAsyncTask cursorAsyncTask = new AsyncTasks.CursorAsyncTask(
+                                AddtaskActivity.this
+                        );
 
-                    int id = cursorAsyncTask.execute(taskName).get();
-                    //sets alarm notification for task
-                    if(id > -1) {
-                        startAlarm(id, calendar, taskName);
-                        Toast.makeText(this, "set alarm", Toast.LENGTH_SHORT);
-                    }else {
-                        Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+                        int id = cursorAsyncTask.execute(taskName).get();
+                        //sets alarm notification for task
+                        if(id > -1) {
+                            startAlarm(id, calendar, taskName);
+                            Toast.makeText(this, "set alarm", Toast.LENGTH_SHORT);
+                        }else {
+                            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+                        }
+
+                        Intent intent = new Intent(this, MainActivity.class);
+                        startActivity(intent);
+
+                        // mDb.close();
                     }
-
-                    Intent intent = new Intent(this, MainActivity.class);
-                    startActivity(intent);
-
-                   // mDb.close();
-                }
-                else{
-                    Toast.makeText(AddtaskActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                    else{
+                        EspressoIdlingResource.decrement();
+                        Toast.makeText(AddtaskActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
             catch (NumberFormatException e){
@@ -322,4 +327,34 @@ public class AddtaskActivity extends AppCompatActivity implements
 
 
     }
+
+   private boolean isBeforeOrAt(Calendar a, Calendar b){
+
+        long aTime = a.get(Calendar.YEAR)* ((a.get(Calendar.YEAR) %4 == 0) ? 86400*365 : 86400*366)
+                        + sumDays(a.get(Calendar.MONTH), a.get(Calendar.YEAR))*86400
+                        + a.get(Calendar.DAY_OF_MONTH)*86400
+                        + a.get(Calendar.HOUR_OF_DAY)*60*60
+                        + a.get(Calendar.MINUTE)*60
+                        + a.get(Calendar.SECOND);
+
+        long bTime = b.get(Calendar.YEAR)* ((b.get(Calendar.YEAR) %4 == 0) ? 86400*365 : 86400*366)
+                + sumDays(b.get(Calendar.MONTH), b.get(Calendar.YEAR))*86400
+                + b.get(Calendar.DAY_OF_MONTH)*86400
+                + b.get(Calendar.HOUR_OF_DAY)*60*60
+                + b.get(Calendar.MINUTE)*60
+                + b.get(Calendar.SECOND);
+
+        return aTime <= bTime;
+    }
+
+    private int sumDays(int month, int year){
+        int sum = 0;
+        for(int i = 1; i <= month; i++){
+            sum += ViewTaskActivity.getDaysInMonth(i, year);
+        }
+        return sum;
+    }
+
+
+
 }

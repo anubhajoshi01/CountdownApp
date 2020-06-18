@@ -22,6 +22,9 @@
             </intent-filter>
         </activity>
         <receiver android:name=".AlertReciever" />
+
     </application>
+    <uses-permission android:name="android.permission.INJECT_EVENTS"/>
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
 
 </manifest>
