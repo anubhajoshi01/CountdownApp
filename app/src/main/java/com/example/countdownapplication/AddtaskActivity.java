@@ -38,7 +38,7 @@ public class AddtaskActivity extends AppCompatActivity implements
 
     private TextView currentTimeTv;
 
-    private int monthSelected, daySelected, hourSelected, minuteSelected, secondSelected;
+    private int monthSelected, daySelected, hourSelected, minuteSelected, secondSelected = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +152,7 @@ public class AddtaskActivity extends AppCompatActivity implements
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                minuteSelected = 1;
+                minuteSelected = 0;
             }
         });
 
@@ -168,7 +168,7 @@ public class AddtaskActivity extends AppCompatActivity implements
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                secondSelected = 1;
+                secondSelected = 0;
             }
         });
 
@@ -272,7 +272,7 @@ public class AddtaskActivity extends AppCompatActivity implements
                         }
 
                         Intent intent = new Intent(this, MainActivity.class);
-                        startActivity(intent);
+                        AddtaskActivity.this.startActivity(intent);
 
                         // mDb.close();
                     }

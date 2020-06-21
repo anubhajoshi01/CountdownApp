@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -54,7 +53,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             public void onClick(View v) {
                 Toast.makeText(mContext, mTaskList.get(position), Toast.LENGTH_SHORT).show();
                 Intent viewTaskIntent = new Intent(mContext, ViewTaskActivity.class);
-                viewTaskIntent.putExtra("task", mTaskList.get(position));
+                if(mTaskList.get(position) != null) {
+                    viewTaskIntent.putExtra("task", mTaskList.get(position));
+                    Log.d("Intent extra", ">>>>>>>>>>> put extra intent");
+                }
+                else{
+                    Log.d("Intent extra", ">>>>>>>>>>>> failed to put extra intent");
+                }
                 mContext.startActivity(viewTaskIntent);
             }
         });

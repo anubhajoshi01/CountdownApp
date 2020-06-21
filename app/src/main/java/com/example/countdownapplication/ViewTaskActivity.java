@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 public class ViewTaskActivity extends AppCompatActivity {
 
@@ -17,9 +20,12 @@ public class ViewTaskActivity extends AppCompatActivity {
     private int[] data;
     private CountDownTimer countDownTimer;
     private long timeLeftInMs;
+    private LocalDate dateDue, dateNow;
    // private int secnow, minnow, hournow, daynow, monthnow, yearnow;
    //public int dayleft, monthleft, yearleft;
     Calendar calendar = Calendar.getInstance();
+    private Calendar now, due = Calendar.getInstance();
+    //private static final int TIME_TO_SUBTRACT = ;
 
 
     @Override
@@ -32,24 +38,33 @@ public class ViewTaskActivity extends AppCompatActivity {
         showDateTv = (TextView)findViewById(R.id.tv_show_date);
         countdownTimeTv = (TextView)findViewById(R.id.tv_countdown_time);
 
-
-
-        if(getIntent().hasExtra("task")){
+        Intent intent = getIntent();
+        Log.d("recieve intent", ">>>>>>>>>>>>>> Recieved intent");
+        if(intent.hasExtra("task")){
+            Log.d("has extra", ">>>>>>>>>> Intent has extra");
             task = getIntent().getStringExtra("task");
+            Log.d("has extra", ">>>>>>>>>> Intent has extra task");
             yourTaskTv.setText(task);
             data = getData(task);
+            Log.d("has extra", ">>>>>>>>>> Intent data recieved");
+
+            showDateTv.setText(data[0] + "/" + data[1] + "/" + data[2]);
+            Log.d("data", ">>>>>>>" + data[0] + " " + data[1] + " "
+                + data[2] + " " + data[3] + " " + data[4] + " " + data[5]);
+
+            due.set(Calendar.YEAR, data[0]);
+            due.set(Calendar.MONTH, data[1]);
+            due.set(Calendar.DAY_OF_MONTH, data[2]);
+            due.set(Calendar.HOUR_OF_DAY, data[3]);
+            due.set(Calendar.MINUTE, data[4]);
+            due.set(Calendar.SECOND, data[5]);
+
         }
 
-        showDateTv.setText(data[0] + "/" + data[1] + "/" + data[2]);
 
 
-        Calendar dateDue = Calendar.getInstance();
-        dateDue.set(Calendar.SECOND, data[5]);
-        dateDue.set(Calendar.MINUTE, data[4]);
-        dateDue.set(Calendar.HOUR_OF_DAY, data[3]);
-        dateDue.set(Calendar.DAY_OF_MONTH, data[2]);
-        dateDue.set(Calendar.MONTH, data[1]);
-        dateDue.set(Calendar.YEAR, data[0]);
+
+
 
 
 
@@ -58,11 +73,11 @@ public class ViewTaskActivity extends AppCompatActivity {
       //          getDaysInMonth(month, year)*24*60*60 + year;
 
 
-        Calendar now = Calendar.getInstance();
+        now = Calendar.getInstance();
 
-        calendar.setTimeInMillis(dateDue.getTimeInMillis() - now.getTimeInMillis());
-        showDateTv.setText(String.valueOf(dateDue.getTimeInMillis()) +" "+ String.valueOf(now.getTimeInMillis())
-            + " " + String.valueOf(dateDue.getTimeInMillis() - now.getTimeInMillis()));
+        calendar.setTimeInMillis(due.getTimeInMillis() - now.getTimeInMillis());
+        showDateTv.setText(String.valueOf(due.getTimeInMillis()) +" "+ String.valueOf(now.getTimeInMillis())
+            + " " + String.valueOf(calendar.getTimeInMillis()));
         /*
         yearnow = calendar.get(Calendar.YEAR);
         monthnow = calendar.get(Calendar.MONTH);
@@ -115,6 +130,7 @@ public class ViewTaskActivity extends AppCompatActivity {
                                 cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COL_SEC))};
             }
         }
+        Log.d("Task not found", ">>>>>>>>>>>> Task not found");
         return new int[] {0};
     }
 
@@ -136,25 +152,26 @@ public class ViewTaskActivity extends AppCompatActivity {
         }
     }
 
-    private void startNewTimer(long seconds){
+    private void startNewTimer(long milliseconds){
 
-        countDownTimer = new CountDownTimer(seconds*1000,1000) {
+        countDownTimer = new CountDownTimer(milliseconds,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                timeLeftInMs = millisUntilFinished;
-                calendar.setTimeInMillis(timeLeftInMs);
+
+
                /* long time = timeLeftInMs/1000;
                 long hourleft = time/3600;
                 long minleft = time - (hourleft*3600)/60;
                 long secleft = time - (minleft*60) - (hourleft*60);*/
                // String timeleft =  timeFormat.format(timeLeftInMs/1000);
                // int[] conversions = millisToTime(timeLeftInMs);
-                String hms = calendar.get(Calendar.HOUR_OF_DAY)+":"+calendar.get(Calendar.MINUTE)+":"+calendar.get(Calendar.SECOND);
+
+                long[] conversions = millisToTime(millisUntilFinished);
+                String hms = conversions[1]+":"+conversions[2]+":"+conversions[3];
            /*     String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(timeLeftInMs),
                         TimeUnit.MILLISECONDS.toMinutes(timeLeftInMs) % TimeUnit.HOURS.toMinutes(1),
                         TimeUnit.MILLISECONDS.toSeconds(timeLeftInMs) % TimeUnit.MINUTES.toSeconds(1)); */
-                countdownTv.setText(calendar.get(Calendar.YEAR)+ "/" + calendar.get(Calendar.MONTH) + "/"
-                        + calendar.get(Calendar.DAY_OF_MONTH) + ";");
+                countdownTv.setText(conversions[0] + "days");
                 countdownTimeTv.setText(hms);
             }
 
@@ -169,11 +186,25 @@ public class ViewTaskActivity extends AppCompatActivity {
 
 
 
-    /*private static int[] millisToTime(long millis){
-        int seconds = (int) (millis / 1000) % 60;
-        int minutes = (int) ((millis / (1000*60)) % 60);
-        int hours   = (int) ((millis / (1000*60*60)) % 24);
+    private static long[] millisToTime(long millis){
 
-        return new int[]{hours, minutes, seconds};
-    } */
+
+        Log.d("millistotime", ">>>>>>>>>>" + millis + " seconds init");
+        long day = TimeUnit.MILLISECONDS.toDays(millis);
+        Log.d("millistotime", ">>>>>>>>>>"+day + " days");
+        millis -= TimeUnit.DAYS.toMillis(day);
+        Log.d("millistotime", ">>>>>>>>>>"+millis + " seconds after days");
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        Log.d("millistotime", ">>>>>>>>>>"+hours + " hours");
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        Log.d("millistotime", ">>>>>>>>>>"+millis + " seconds after hours");
+        long minute = TimeUnit.MILLISECONDS.toMinutes(millis);
+        Log.d("millistotime", ">>>>>>>>>>"+minute + " minutes");
+        millis -= TimeUnit.MINUTES.toMillis(minute);
+        Log.d("millistotime", ">>>>>>>>>>"+millis + "seconds");
+        long second = TimeUnit.MILLISECONDS.toSeconds(millis);
+
+
+        return new long[]{day, hours, minute, second};
+    }
 }
