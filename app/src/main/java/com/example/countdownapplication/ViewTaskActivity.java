@@ -53,7 +53,7 @@ public class ViewTaskActivity extends AppCompatActivity {
                 + data[2] + " " + data[3] + " " + data[4] + " " + data[5]);
 
             due.set(Calendar.YEAR, data[0]);
-            due.set(Calendar.MONTH, data[1]);
+            due.set(Calendar.MONTH, (data[1]-1));
             due.set(Calendar.DAY_OF_MONTH, data[2]);
             due.set(Calendar.HOUR_OF_DAY, data[3]);
             due.set(Calendar.MINUTE, data[4]);
@@ -189,19 +189,19 @@ public class ViewTaskActivity extends AppCompatActivity {
     private static long[] millisToTime(long millis){
 
 
-        Log.d("millistotime", ">>>>>>>>>>" + millis + " seconds init");
+        //Log.d("millistotime", ">>>>>>>>>>" + millis + " seconds init");
         long day = TimeUnit.MILLISECONDS.toDays(millis);
-        Log.d("millistotime", ">>>>>>>>>>"+day + " days");
+        //Log.d("millistotime", ">>>>>>>>>>"+day + " days");
         millis -= TimeUnit.DAYS.toMillis(day);
-        Log.d("millistotime", ">>>>>>>>>>"+millis + " seconds after days");
+        //Log.d("millistotime", ">>>>>>>>>>"+millis + " seconds after days");
         long hours = TimeUnit.MILLISECONDS.toHours(millis);
-        Log.d("millistotime", ">>>>>>>>>>"+hours + " hours");
+        //Log.d("millistotime", ">>>>>>>>>>"+hours + " hours");
         millis -= TimeUnit.HOURS.toMillis(hours);
-        Log.d("millistotime", ">>>>>>>>>>"+millis + " seconds after hours");
+        //Log.d("millistotime", ">>>>>>>>>>"+millis + " seconds after hours");
         long minute = TimeUnit.MILLISECONDS.toMinutes(millis);
-        Log.d("millistotime", ">>>>>>>>>>"+minute + " minutes");
+        //Log.d("millistotime", ">>>>>>>>>>"+minute + " minutes");
         millis -= TimeUnit.MINUTES.toMillis(minute);
-        Log.d("millistotime", ">>>>>>>>>>"+millis + "seconds");
+        //Log.d("millistotime", ">>>>>>>>>>"+millis + "seconds");
         long second = TimeUnit.MILLISECONDS.toSeconds(millis);
 
 

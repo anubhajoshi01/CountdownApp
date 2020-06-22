@@ -182,7 +182,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(MainActivity.this, AlertReciever.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, requestCode, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, requestCode, intent,
+                PendingIntent.FLAG_ONE_SHOT);
 
         alarmManager.cancel(pendingIntent);
     }

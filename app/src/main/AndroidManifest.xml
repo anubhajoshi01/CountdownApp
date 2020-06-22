@@ -26,5 +26,6 @@
     </application>
     <uses-permission android:name="android.permission.INJECT_EVENTS"/>
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
+    <uses-permission android:name="android.permission.SET_ALARM"/>
 
 </manifest>

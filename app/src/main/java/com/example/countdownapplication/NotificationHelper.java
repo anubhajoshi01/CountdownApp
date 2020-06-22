@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -42,6 +43,7 @@ public class NotificationHelper extends ContextWrapper {
 
     public NotificationCompat.Builder getChannelNotification(String message){
 
+        Log.d("Alarm", "building notification");
         return new NotificationCompat.Builder(getApplicationContext(), channelID)
                 .setContentTitle("Task scheduled due")
                 .setContentText(message)

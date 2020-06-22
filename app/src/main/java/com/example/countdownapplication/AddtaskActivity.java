@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -207,7 +209,7 @@ public class AddtaskActivity extends AppCompatActivity implements
                 calendar.set(Calendar.MONTH, monthSelected-1);
                 calendar.set(Calendar.DAY_OF_MONTH, daySelected);
                 calendar.set(Calendar.HOUR_OF_DAY, hourSelected);
-                calendar.set(Calendar.MONTH, monthSelected);
+                calendar.set(Calendar.MINUTE, minuteSelected);
                 calendar.set(Calendar.SECOND, secondSelected);
 
                 AsyncTasks.InsertionAsyncTask insertionAsyncTask = new AsyncTasks.InsertionAsyncTask(
@@ -312,6 +314,7 @@ public class AddtaskActivity extends AppCompatActivity implements
         return false;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void startAlarm(int requestCode, Calendar calendar, String taskName){
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -321,11 +324,17 @@ public class AddtaskActivity extends AppCompatActivity implements
         intent.putExtra("taskID", requestCode);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(AddtaskActivity.this,
-                requestCode, intent, 0);
+                requestCode, intent, PendingIntent.FLAG_ONE_SHOT);
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        long dueTime = calendar.getTimeInMillis();
 
 
+        Log.d("Alarm", "trigger in ms: " + (dueTime));
+
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                dueTime, pendingIntent);
+
+        Log.d("Alarm", "set alarm");
     }
 
    private boolean isBeforeOrAt(Calendar a, Calendar b){
