@@ -57,9 +57,9 @@ public class AddtaskActivity extends AppCompatActivity implements
 
         Calendar calendar = Calendar.getInstance();
 
-        currentTimeTv.setText(calendar.get(Calendar.YEAR) + " " + calendar.get(Calendar.MONTH) + " "
+      /*  currentTimeTv.setText(calendar.get(Calendar.YEAR) + " " + calendar.get(Calendar.MONTH) + " "
             + calendar.get(Calendar.DAY_OF_MONTH) + " " + calendar.get(Calendar.HOUR_OF_DAY) + " "
-            + calendar.get(Calendar.MINUTE) + " " + calendar.get(Calendar.SECOND));
+            + calendar.get(Calendar.MINUTE) + " " + calendar.get(Calendar.SECOND));*/
 
         addButton = findViewById(R.id.btn_add);
         addButton.setOnClickListener(this);
@@ -238,13 +238,13 @@ public class AddtaskActivity extends AppCompatActivity implements
                             String.valueOf(daySelected), String.valueOf(hourSelected),
                             String.valueOf(minuteSelected), String.valueOf(secondSelected)).get()){
                         EspressoIdlingResource.decrement();
-                        String logmsg = taskName + " " + year + " " + monthSelected + " " + daySelected +
-                                " " + hourSelected + " " + minuteSelected + " " + secondSelected;
-                        Log.d("Task Added", logmsg);
+                       // String logmsg = taskName + " " + year + " " + monthSelected + " " + daySelected +
+                        //        " " + hourSelected + " " + minuteSelected + " " + secondSelected;
+                        //Log.d("Task Added", logmsg);
                         //  int count = DatabaseHelper.getEntryCount(mDb);
                         // Log.d("Entry count", count + " ");
                         Log.d("Inserted","Inserted task");
-                        Toast.makeText(AddtaskActivity.this, logmsg
+                        Toast.makeText(AddtaskActivity.this, "Task made"
                                 , Toast.LENGTH_LONG)
                                 .show();
 

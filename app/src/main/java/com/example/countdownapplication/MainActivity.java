@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (taskID > -1) {
                     cancelAlarm(taskID);
+                    Log.d("Alarm Cancel", "cancelAlarmMethod");
 
                     db.deleteData(taskRemoved);
 
@@ -179,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void cancelAlarm(int requestCode) {
+        Log.d("Cancel Alarm", "Cancelling alarm");
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(MainActivity.this, AlertReciever.class);
@@ -186,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 PendingIntent.FLAG_ONE_SHOT);
 
         alarmManager.cancel(pendingIntent);
+        Log.d("Alarm Cancel", "Cancelled Alarm");
     }
 
     private static String format(int i) {

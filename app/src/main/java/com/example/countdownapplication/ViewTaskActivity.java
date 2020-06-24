@@ -76,8 +76,8 @@ public class ViewTaskActivity extends AppCompatActivity {
         now = Calendar.getInstance();
 
         calendar.setTimeInMillis(due.getTimeInMillis() - now.getTimeInMillis());
-        showDateTv.setText(String.valueOf(due.getTimeInMillis()) +" "+ String.valueOf(now.getTimeInMillis())
-            + " " + String.valueOf(calendar.getTimeInMillis()));
+       /* showDateTv.setText(String.valueOf(due.getTimeInMillis()) +" "+ String.valueOf(now.getTimeInMillis())
+            + " " + String.valueOf(calendar.getTimeInMillis())); */
         /*
         yearnow = calendar.get(Calendar.YEAR);
         monthnow = calendar.get(Calendar.MONTH);

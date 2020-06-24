@@ -22,10 +22,11 @@ public class AlertReciever extends BroadcastReceiver {
             NotificationHelper notificationHelper = new NotificationHelper(context, channelID);
             NotificationCompat.Builder builder = notificationHelper.getChannelNotification(taskName);
 
-            notificationHelper.getManager().notify(taskID, builder.build());
-
             DatabaseHelper db = new DatabaseHelper(context);
             db.deleteData(taskName);
+
+            notificationHelper.getManager().notify(taskID, builder.build());
+
         }
     }
 }
